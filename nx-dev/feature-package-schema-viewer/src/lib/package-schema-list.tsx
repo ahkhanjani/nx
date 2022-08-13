@@ -1,11 +1,10 @@
 import { PackageMetadata } from '@nrwl/nx-dev/models-package';
+import { Breadcrumbs } from '@nrwl/nx-dev/ui-common';
 import { renderMarkdown } from '@nrwl/nx-dev/ui-markdoc';
 import cx from 'classnames';
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
-import { Breadcrumbs } from '@nrwl/nx-dev/ui-common';
-import { getPublicPackageName } from './get-public-package-name';
 import { Heading1 } from './ui/headings';
 import { PackageReference } from './ui/package-reference';
 
@@ -21,15 +20,17 @@ export function PackageSchemaList({
       name: string;
       description: string;
       githubUrl: string;
+      id: string;
       readme: { content: string; filePath: string };
     };
     seo: { title: string; description: string; url: string; imageUrl: string };
     markdown: ReactNode;
   } = {
     pkg: {
-      name: getPublicPackageName(pkg.name),
+      name: pkg.packageName,
       description: pkg.description,
       githubUrl: pkg.githubRoot + pkg.root,
+      id: pkg.name,
       get readme() {
         const hasOverview = pkg.documentation.find((d) => d.id === 'overview');
         return !!hasOverview
@@ -41,7 +42,7 @@ export function PackageSchemaList({
       },
     },
     seo: {
-      title: `${getPublicPackageName(pkg.name)} | Nx`,
+      title: `${pkg.packageName} | Nx`,
       description: pkg.description,
       imageUrl: `https://nx.dev/images/open-graph/${router.asPath
         .replace('/', '')
@@ -129,7 +130,7 @@ export function PackageSchemaList({
               <div className="prose mb-16 max-w-none">{vm.markdown}</div>
 
               <PackageReference
-                name={vm.pkg.name}
+                name={vm.pkg.id}
                 executors={pkg.executors}
                 generators={pkg.generators}
               ></PackageReference>
@@ -140,5 +141,3 @@ export function PackageSchemaList({
     </>
   );
 }
-
-export default PackageSchemaList;

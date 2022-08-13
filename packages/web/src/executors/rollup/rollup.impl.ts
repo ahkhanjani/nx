@@ -205,6 +205,7 @@ export function createRollupOptions(
         ),
       }),
       image(),
+      json(),
       useBabel &&
         require('rollup-plugin-typescript2')({
           check: true,
@@ -213,7 +214,6 @@ export function createRollupOptions(
             compilerOptions: createCompilerOptions(options, dependencies),
           },
         }),
-      useSwc && swc(),
       peerDepsExternal({
         packageJsonPath: options.project,
       }),
@@ -232,6 +232,7 @@ export function createRollupOptions(
         preferBuiltins: true,
         extensions: fileExtensions,
       }),
+      useSwc && swc(),
       useBabel &&
         getBabelInputPlugin({
           // Let's `@nrwl/web/babel` preset know that we are packaging.
@@ -258,7 +259,6 @@ export function createRollupOptions(
         }),
       commonjs(),
       analyze(),
-      json(),
     ];
 
     const globals = options.globals

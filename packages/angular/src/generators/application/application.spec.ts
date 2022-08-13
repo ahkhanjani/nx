@@ -9,7 +9,10 @@ import {
   readWorkspaceConfiguration,
   updateJson,
 } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import {
+  createTreeWithEmptyV1Workspace,
+  createTreeWithEmptyWorkspace,
+} from '@nrwl/devkit/testing';
 import { Linter } from '@nrwl/linter';
 import { E2eTestRunner, UnitTestRunner } from '../../utils/test-runners';
 import {
@@ -29,7 +32,7 @@ describe('app', () => {
   > = installedCypressVersion as never;
   beforeEach(() => {
     mockedInstalledCypressVersion.mockReturnValue(10);
-    appTree = createTreeWithEmptyWorkspace();
+    appTree = createTreeWithEmptyV1Workspace();
   });
 
   describe('not nested', () => {
@@ -103,7 +106,11 @@ describe('app', () => {
       );
       expect(tsconfigApp.compilerOptions.outDir).toEqual('../../dist/out-tsc');
       expect(tsconfigApp.extends).toEqual('./tsconfig.json');
-      expect(tsconfigApp.exclude).toEqual(['**/*.test.ts', '**/*.spec.ts']);
+      expect(tsconfigApp.exclude).toEqual([
+        'jest.config.ts',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+      ]);
 
       const eslintrcJson = parseJson(
         appTree.read('apps/my-app/.eslintrc.json', 'utf-8')
@@ -307,7 +314,7 @@ describe('app', () => {
         {
           path: 'apps/my-dir/my-app/tsconfig.app.json',
           lookupFn: (json) => json.exclude,
-          expectedValue: ['**/*.test.ts', '**/*.spec.ts'],
+          expectedValue: ['jest.config.ts', '**/*.test.ts', '**/*.spec.ts'],
         },
         {
           path: 'apps/my-dir/my-app/.eslintrc.json',
@@ -341,7 +348,7 @@ describe('app', () => {
 
   describe('at the root', () => {
     beforeEach(() => {
-      appTree = createTreeWithEmptyWorkspace(2);
+      appTree = createTreeWithEmptyWorkspace();
       updateJson(appTree, 'nx.json', (json) => ({
         ...json,
         workspaceLayout: { appsDir: '' },
@@ -390,7 +397,7 @@ describe('app', () => {
         {
           path: 'my-dir/my-app/tsconfig.app.json',
           lookupFn: (json) => json.exclude,
-          expectedValue: ['**/*.test.ts', '**/*.spec.ts'],
+          expectedValue: ['jest.config.ts', '**/*.test.ts', '**/*.spec.ts'],
         },
         {
           path: 'my-dir/my-app/.eslintrc.json',
@@ -731,7 +738,7 @@ describe('app', () => {
   describe('--e2e-test-runner', () => {
     describe(E2eTestRunner.Protractor, () => {
       it('should create the e2e project in v2 workspace', async () => {
-        appTree = createTreeWithEmptyWorkspace(2);
+        appTree = createTreeWithEmptyWorkspace();
 
         expect(
           async () =>

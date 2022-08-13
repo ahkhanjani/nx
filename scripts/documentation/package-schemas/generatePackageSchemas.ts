@@ -2,7 +2,6 @@
  * Lookup for all the schema.json and add create a list with their path and related package information
  * */
 import * as chalk from 'chalk';
-import { readJsonSync, writeJSONSync } from 'fs-extra';
 import { join, resolve } from 'path';
 import {
   getSchemaFromReference,
@@ -69,6 +68,7 @@ export function generatePackageSchemas(): Promise<void>[] {
    */
   const packageList = packages.map((p) => ({
     name: p.name,
+    packageName: p.name,
     path: join('generated', 'packages', p.name + '.json'),
     schemas: {
       executors: p.executors.map((s) => s.name),

@@ -7,7 +7,10 @@ import {
   Tree,
   updateJson,
 } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import {
+  createTreeWithEmptyV1Workspace,
+  createTreeWithEmptyWorkspace,
+} from '@nrwl/devkit/testing';
 import { Linter } from '@nrwl/linter';
 import { toNewFormat } from 'nx/src/config/workspaces';
 import { createApp } from '../../utils/nx-devkit/testing';
@@ -38,12 +41,12 @@ describe('lib', () => {
   }
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
+    tree = createTreeWithEmptyV1Workspace();
   });
 
   describe('workspace v2', () => {
     beforeEach(() => {
-      tree = createTreeWithEmptyWorkspace(2);
+      tree = createTreeWithEmptyWorkspace();
     });
 
     it('should run the library generator without erroring if the directory has a trailing slash', async () => {
@@ -78,7 +81,7 @@ describe('lib', () => {
 
   describe('workspace v1', () => {
     beforeEach(() => {
-      tree = createTreeWithEmptyWorkspace(1);
+      tree = createTreeWithEmptyV1Workspace();
     });
 
     it('should default to inline project for first project', async () => {
@@ -394,6 +397,7 @@ describe('lib', () => {
         expect(tsconfigJson.exclude).toEqual([
           'src/test-setup.ts',
           '**/*.spec.ts',
+          'jest.config.ts',
           '**/*.test.ts',
         ]);
       });
@@ -409,6 +413,7 @@ describe('lib', () => {
         expect(tsconfigJson.exclude).toEqual([
           'src/test.ts',
           '**/*.spec.ts',
+          'jest.config.ts',
           '**/*.test.ts',
         ]);
       });
@@ -421,7 +426,11 @@ describe('lib', () => {
 
         // ASSERT
         const tsconfigJson = readJson(tree, 'libs/my-lib/tsconfig.lib.json');
-        expect(tsconfigJson.exclude).toEqual(['**/*.test.ts', '**/*.spec.ts']);
+        expect(tsconfigJson.exclude).toEqual([
+          'jest.config.ts',
+          '**/*.test.ts',
+          '**/*.spec.ts',
+        ]);
       });
     });
 
@@ -712,7 +721,7 @@ describe('lib', () => {
 
   describe('at the root', () => {
     beforeEach(() => {
-      tree = createTreeWithEmptyWorkspace(2);
+      tree = createTreeWithEmptyWorkspace();
       updateJson(tree, 'nx.json', (json) => ({
         ...json,
         workspaceLayout: { libsDir: '' },
@@ -902,6 +911,7 @@ describe('lib', () => {
         expect(tsConfigLibJson.exclude).toEqual([
           'src/test-setup.ts',
           '**/*.spec.ts',
+          'jest.config.ts',
           '**/*.test.ts',
         ]);
 
@@ -916,6 +926,7 @@ describe('lib', () => {
         expect(tsConfigLibJson2.exclude).toEqual([
           'src/test-setup.ts',
           '**/*.spec.ts',
+          'jest.config.ts',
           '**/*.test.ts',
         ]);
 
@@ -933,6 +944,7 @@ describe('lib', () => {
         expect(tsConfigLibJson3.exclude).toEqual([
           'src/test-setup.ts',
           '**/*.spec.ts',
+          'jest.config.ts',
           '**/*.test.ts',
         ]);
       });
